@@ -1,0 +1,120 @@
+<!-- explorer/templates/explorer/destination_list.html -->
+{% extends 'explorer/base.html' %}
+
+{% block title %}Destinations - TravelBucket{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Background Image -->
+<section class="py-5 text-white" style="
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1121&q=80');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">TravelBucket</h1>
+        <p class="lead">Discover Your Next Adventure</p>
+        <p>Explore breathtaking destinations around the world and create memories that last a lifetime</p>
+        <a href="#destinations" class="btn btn-primary btn-lg mt-3">Start Exploring</a>
+    </div>
+</section>
+
+<!-- Rest of your content remains exactly the same -->
+<!-- Filter Section -->
+<section class="py-4">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Destinations</h2>
+            <div class="d-flex">
+                <div class="form-check me-3">
+                    <input class="form-check-input" type="checkbox" value="" id="featuredCheck" checked>
+                    <label class="form-check-label" for="featuredCheck">
+                        Featured
+                    </label>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        Filter
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                        <li><a class="dropdown-item" href="#">Activities</a></li>
+                        <li><a class="dropdown-item" href="#">Travelers</a></li>
+                        <li><a class="dropdown-item" href="#">Reviews</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <p class="text-muted">{{ destinations|length }} destinations found</p>
+    </div>
+</section>
+
+<!-- Destinations Grid -->
+<section id="destinations" class="py-4">
+    <div class="container">
+        <div class="row">
+            {% for destination in destinations %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <!-- Placeholder for image - you'll need to add an image field to your model -->
+                    <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <span>Image Placeholder</span>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ destination.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ destination.country }}</h6>
+                        <p class="card-text">{{ destination.description|truncatewords:30 }}</p>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'activities_page' destination.id %}" class="btn btn-outline-primary btn-sm">View Activities</a>
+                            <a href="{% url 'reviews_page' destination.id %}" class="btn btn-outline-secondary btn-sm">View Reviews</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info" role="alert">
+                    No destinations available yet. <a href="#add-destination">Add the first destination!</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Add New Destination Section -->
+<section id="add-destination" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Add a New Destination</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form method="post" action="{% url 'destination_create' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Destination Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="best_season" class="form-label">Best Season to Visit</label>
+                        <input type="text" class="form-control" id="best_season" name="best_season" required>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Add Destination</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
