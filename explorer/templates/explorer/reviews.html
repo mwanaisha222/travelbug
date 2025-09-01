@@ -1,0 +1,22 @@
+<!-- explorer/templates/explorer/reviews.html -->
+{% extends 'explorer/base.html' %}
+
+{% block title %}Reviews for {{ destination.name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Reviews for {{ destination.name }}, {{ destination.country }}</h1>
+<div class="list-group">
+    {% for review in reviews %}
+    <div class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ review.traveler.name }}</h5>
+            <small>Rating: {{ review.rating }}/10</small>
+        </div>
+        <p class="mb-1">{{ review.comment }}</p>
+    </div>
+    {% empty %}
+    <div class="list-group-item">No reviews available for this destination.</div>
+    {% endfor %}
+</div>
+<a href="{% url 'destination_list' %}" class="btn btn-outline-primary mt-3">Back to Destinations</a>
+{% endblock %}

@@ -1,0 +1,20 @@
+<!-- explorer/templates/explorer/activities.html -->
+{% extends 'explorer/base.html' %}
+
+{% block title %}Activities in {{ destination.name }}{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Activities in {{ destination.name }}, {{ destination.country }}</h1>
+<ul class="list-group">
+    {% for activity in activities %}
+    <li class="list-group-item">
+        <h5 class="mb-1">{{ activity.name }}</h5>
+        <p class="mb-1">{{ activity.description }}</p>
+        <small class="text-muted">Estimated Cost: ${{ activity.cost_estimate }}</small>
+    </li>
+    {% empty %}
+    <li class="list-group-item">No activities available for this destination.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'destination_list' %}" class="btn btn-outline-primary mt-3">Back to Destinations</a>
+{% endblock %}

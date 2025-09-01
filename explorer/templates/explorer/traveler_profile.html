@@ -1,0 +1,14 @@
+<!-- explorer/templates/explorer/traveler_profile.html -->
+{% extends 'explorer/base.html' %}
+
+{% block title %}{{ traveler.name }}'s Profile{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">{{ traveler.name }}'s Profile</h1>
+<div class="card">
+    <div class="card-body">
+        <p><strong>Email:</strong> {{ traveler.email }}</p>
+        <p><strong>Favorite Destination:</strong> {% if traveler.favorite_destination %}{{ traveler.favorite_destination.name }}, {{ traveler.favorite_destination.country }}{% else %}None selected{% endif %}</p>
+    </div>
+</div>
+{% endblock %}
