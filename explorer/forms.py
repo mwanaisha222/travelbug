@@ -5,4 +5,4 @@ from .models import Destination
 class DestinationForm(forms.ModelForm):
     class Meta:
         model = Destination
-        fields = ['name', 'country', 'description', 'best_season']
+        fields = ['name', 'country', 'description', 'best_season', 'image']

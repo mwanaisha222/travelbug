@@ -5,6 +5,7 @@ class Destination(models.Model):
     country = models.CharField(max_length=100)
     description = models.TextField()
     best_season = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='destinations/', null=True, blank=True)
 
     def __str__(self):
         return self.name
