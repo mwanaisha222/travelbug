@@ -92,18 +92,31 @@
   
   .grid-2 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    grid-template-columns: 1fr 1fr;
     gap: 2rem;
   }
   
-  @media (max-width: 768px) {
+  @media (max-width: 1200px) {
     .grid-2 {
       grid-template-columns: 1fr;
     }
-    
+  }
+  
+  @media (max-width: 768px) {
     .stat-number {
       font-size: 2rem;
     }
+  }
+  
+  /* Ensure pie charts have enough height */
+  .chart-container {
+    min-height: 550px;
+  }
+  
+  /* Prevent plotly charts from overflowing */
+  .chart-container .plotly {
+    width: 100% !important;
+    height: 100% !important;
   }
   
   .no-data {

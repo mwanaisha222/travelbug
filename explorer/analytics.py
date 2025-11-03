@@ -144,9 +144,11 @@ def generate_activity_distribution_pie():
     fig.update_layout(
         title='Activity Type Distribution Across Destinations',
         template='plotly_white',
-        height=500,
+        height=550,
+        width=None,
         font=dict(size=12),
-        title_font_size=16
+        title_font_size=16,
+        margin=dict(l=20, r=20, t=80, b=20)
     )
     
     return fig.to_html(full_html=False, include_plotlyjs='cdn')
@@ -178,9 +180,11 @@ def generate_traveler_preferences_pie():
     fig.update_layout(
         title='Top Traveler Favorite Destinations',
         template='plotly_white',
-        height=500,
+        height=550,
+        width=None,
         font=dict(size=12),
-        title_font_size=16
+        title_font_size=16,
+        margin=dict(l=20, r=20, t=80, b=20)
     )
     
     return fig.to_html(full_html=False, include_plotlyjs='cdn')
