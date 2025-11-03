@@ -97,6 +97,14 @@ class DestinationCreateViewTest(TestCase):
             'description': 'Beautiful Mediterranean city',
             'best_season': 'Spring'
         }
+        # Create a staff user for admin-restricted tests
+        from django.contrib.auth.models import User
+        self.staff_user = User.objects.create_user(
+            username='admin',
+            password='adminpass',
+            is_staff=True
+        )
+        self.client.login(username='admin', password='adminpass')
     
     def test_destination_create_view_get(self):
         """Test GET request to destination create view."""
@@ -130,17 +138,26 @@ class DestinationCreateViewTest(TestCase):
         # Should not redirect, should show form with errors
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'explorer/destination_form.html')
-        self.assertFormError(response, 'form', 'name', 'This field is required.')
+        self.assertContains(response, 'This field is required')
         
         # Check destination was not created
         self.assertFalse(Destination.objects.filter(country='Spain').exists())
     
     def test_destination_create_with_image(self):
         """Test creating destination with image upload."""
+        # Create a simple 1x1 pixel PNG image
+        from PIL import Image
+        import io
+        
+        image = Image.new('RGB', (1, 1), color='red')
+        image_io = io.BytesIO()
+        image.save(image_io, format='PNG')
+        image_io.seek(0)
+        
         test_image = SimpleUploadedFile(
-            name='test_image.jpg',
-            content=b'fake image content',
-            content_type='image/jpeg'
+            name='test_image.png',
+            content=image_io.read(),
+            content_type='image/png'
         )
         
         data_with_image = self.valid_data.copy()
@@ -408,11 +425,16 @@ class ViewsIntegrationTest(TestCase):
             cost_estimate=Decimal('18.50')
         )
         
-        # Create travelers
+        # Create travelers with user
+        from django.contrib.auth.models import User
+        self.user = User.objects.create_user(username='testuser', password='pass123')
+        self.staff_user = User.objects.create_user(username='staff', password='staffpass', is_staff=True)
+        
         self.traveler = Traveler.objects.create(
             name='Emma Travel',
             email='emma@example.com',
-            favorite_destination=self.destination1
+            favorite_destination=self.destination1,
+            user=self.user
         )
         
         # Create reviews
@@ -452,7 +474,8 @@ class ViewsIntegrationTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Emma Travel')
         
-        # 5. Create a new destination
+        # 5. Create a new destination (need to be staff)
+        self.client.login(username='staff', password='staffpass')
         new_destination_data = {
             'name': 'Vienna',
             'country': 'Austria',
@@ -484,7 +507,8 @@ class ViewsIntegrationTest(TestCase):
         response = self.client.get(f'/travelers/{self.traveler.id}/')
         self.assertEqual(response.status_code, 200)
         
-        # Test destination create URL pattern
+        # Test destination create URL pattern (requires staff login)
+        self.client.login(username='staff', password='staffpass')
         response = self.client.get('/destination/add/')
         self.assertEqual(response.status_code, 200)
     
@@ -527,7 +551,16 @@ class ViewSecurityTest(TestCase):
     
     def test_csrf_protection(self):
         """Test CSRF protection on forms."""
-        # POST without CSRF token should fail
+        # Create staff user
+        from django.contrib.auth.models import User
+        staff_user = User.objects.create_user(username='staff', password='pass', is_staff=True)
+        
+        # Use a client with CSRF checks enabled
+        from django.test import Client
+        csrf_client = Client(enforce_csrf_checks=True)
+        csrf_client.login(username='staff', password='pass')
+        
+        # POST without CSRF token should fail with 403
         data = {
             'name': 'New Destination',
             'country': 'New Country',
@@ -535,10 +568,9 @@ class ViewSecurityTest(TestCase):
             'best_season': 'New Season'
         }
         
-        response = self.client.post(reverse('destination_create'), data)
-        # Django's CSRF middleware should handle this
-        # The exact response depends on Django settings
-        self.assertIn(response.status_code, [403, 200])  # 403 for CSRF failure, 200 for form redisplay
+        response = csrf_client.post(reverse('destination_create'), data)
+        # Should be rejected with 403 Forbidden
+        self.assertEqual(response.status_code, 403)
     
     def test_sql_injection_protection(self):
         """Test protection against SQL injection attempts."""
@@ -551,6 +583,11 @@ class ViewSecurityTest(TestCase):
     
     def test_xss_protection(self):
         """Test XSS protection in form inputs."""
+        # Create staff user
+        from django.contrib.auth.models import User
+        staff_user = User.objects.create_user(username='staff', password='pass', is_staff=True)
+        self.client.login(username='staff', password='pass')
+        
         xss_payload = '<script>alert("XSS")</script>'
         
         data = {

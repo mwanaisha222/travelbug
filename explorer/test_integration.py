@@ -129,6 +129,11 @@ class UserWorkflowIntegrationTest(TestCase):
     
     def test_destination_creation_workflow(self):
         """Test complete destination creation workflow."""
+        # Create staff user
+        from django.contrib.auth.models import User
+        staff_user = User.objects.create_user(username='staff', password='pass', is_staff=True)
+        self.client.login(username='staff', password='pass')
+        
         # Step 1: User goes to destination list
         response = self.client.get('/')
         initial_count = Destination.objects.count()
@@ -169,7 +174,12 @@ class UserWorkflowIntegrationTest(TestCase):
     
     def test_navigation_consistency_workflow(self):
         """Test consistent navigation throughout the application."""
-        # Start from home page
+        # Create staff user
+        from django.contrib.auth.models import User
+        staff_user = User.objects.create_user(username='staff', password='pass', is_staff=True)
+        self.client.login(username='staff', password='pass')
+        
+        # Start from home
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         
@@ -226,6 +236,11 @@ class UserWorkflowIntegrationTest(TestCase):
     
     def test_error_handling_workflow(self):
         """Test error handling in complete workflows."""
+        # Create staff user for destination_create
+        from django.contrib.auth.models import User
+        staff_user = User.objects.create_user(username='staff', password='pass', is_staff=True)
+        self.client.login(username='staff', password='pass')
+        
         # Test 404 error handling
         response = self.client.get('/destinations/999/activities/')
         self.assertEqual(response.status_code, 404)
@@ -399,9 +414,16 @@ class PerformanceIntegrationTest(TestCase):
     
     def test_destination_list_performance(self):
         """Test destination list page performance with many destinations."""
+        # Home page only shows first 6 featured destinations
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         
+        # Should show at least some destinations (first 6 featured)
+        self.assertContains(response, 'Destination')
+        
+        # Destination list page should show all
+        response = self.client.get('/destinations/')
+        self.assertEqual(response.status_code, 200)
         # Should show all destinations
         for destination in self.destinations:
             self.assertContains(response, destination.name)
