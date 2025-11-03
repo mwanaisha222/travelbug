@@ -1,0 +1,244 @@
+{% extends 'explorer/base.html' %}
+
+{% block title %}Welcome to TravelBucket{% endblock %}
+
+{% block content %}
+<style>
+  .hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+    background-size: cover;
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  .feature-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 100%;
+  }
+  
+  .feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  }
+  
+  .feature-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .destination-card {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 250px;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+    background: #f8f9fa;
+  }
+  
+  .destination-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .destination-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .destination-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    color: white;
+    padding: 1rem;
+  }
+  
+  .stats-section {
+    background: #f8f9fa;
+    padding: 3rem 0;
+  }
+  
+  .stat-card {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #667eea;
+  }
+  
+  .cta-section {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    padding: 4rem 0;
+    text-align: center;
+  }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="container hero-content">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <h1 class="display-4 fw-bold mb-3">Discover Your Next Adventure</h1>
+        <p class="lead mb-4">Explore breathtaking destinations, discover exciting activities, and share your travel experiences with a community of adventurers.</p>
+        <div class="d-flex gap-3 flex-wrap">
+          <a href="{% url 'destination_list' %}" class="btn btn-light btn-lg px-4">
+            <i class="fas fa-compass me-2"></i>Explore Destinations
+          </a>
+          {% if not user.is_authenticated %}
+          <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg px-4">
+            <i class="fas fa-user-plus me-2"></i>Join Now
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="text-center">
+          <i class="fas fa-globe-americas" style="font-size: 15rem; opacity: 0.2;"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold mb-3">Why Choose TravelBucket?</h2>
+    <p class="text-muted">Everything you need to plan your perfect journey</p>
+  </div>
+  
+  <div class="row g-4">
+    <div class="col-md-3">
+      <div class="card feature-card shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="feature-icon bg-primary bg-opacity-10 text-primary mx-auto">
+            <i class="fas fa-map-marked-alt"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Destinations</h5>
+          <p class="text-muted small">Discover amazing places around the world with detailed information</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card feature-card shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="feature-icon bg-success bg-opacity-10 text-success mx-auto">
+            <i class="fas fa-hiking"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Activities</h5>
+          <p class="text-muted small">Find exciting activities and experiences at every destination</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card feature-card shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="feature-icon bg-info bg-opacity-10 text-info mx-auto">
+            <i class="fas fa-users"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Community</h5>
+          <p class="text-muted small">Connect with fellow travelers and share your adventures</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-3">
+      <div class="card feature-card shadow-sm">
+        <div class="card-body text-center p-4">
+          <div class="feature-icon bg-warning bg-opacity-10 text-warning mx-auto">
+            <i class="fas fa-star"></i>
+          </div>
+          <h5 class="fw-bold mb-2">Reviews</h5>
+          <p class="text-muted small">Read authentic reviews and ratings from real travelers</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Featured Destinations -->
+{% if featured %}
+<div class="container py-5">
+  <div class="text-center mb-5">
+    <h2 class="fw-bold mb-3">Featured Destinations</h2>
+    <p class="text-muted">Start your journey with these popular picks</p>
+  </div>
+  
+  <div class="row g-4">
+    {% for dest in featured %}
+    <div class="col-md-4">
+      <a href="{% url 'activities_page' destination_id=dest.id %}" class="text-decoration-none">
+        <div class="destination-card shadow">
+          {% if dest.image %}
+          <img src="{{ dest.image.url }}" alt="{{ dest.name }}">
+          {% else %}
+          <div class="d-flex align-items-center justify-content-center h-100 bg-gradient" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <i class="fas fa-mountain text-white" style="font-size: 4rem; opacity: 0.5;"></i>
+          </div>
+          {% endif %}
+          <div class="destination-overlay">
+            <h5 class="mb-1 fw-bold">{{ dest.name }}</h5>
+            <p class="mb-0 small"><i class="fas fa-map-marker-alt me-1"></i>{{ dest.country }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  
+  <div class="text-center mt-4">
+    <a href="{% url 'destination_list' %}" class="btn btn-outline-primary btn-lg">
+      View All Destinations <i class="fas fa-arrow-right ms-2"></i>
+    </a>
+  </div>
+</div>
+{% endif %}
+
+<!-- CTA Section -->
+{% if not user.is_authenticated %}
+<div class="cta-section">
+  <div class="container">
+    <h2 class="fw-bold mb-3">Ready to Start Your Journey?</h2>
+    <p class="lead mb-4">Join thousands of travelers sharing their experiences</p>
+    <a href="{% url 'register' %}" class="btn btn-light btn-lg px-5">
+      <i class="fas fa-rocket me-2"></i>Get Started Today
+    </a>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

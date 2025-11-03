@@ -4,19 +4,128 @@
 {% block title %}Reviews for {{ destination.name }}{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Reviews for {{ destination.name }}, {{ destination.country }}</h1>
-<div class="list-group">
+<style>
+  .destination-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+  }
+  
+  .review-item {
+    border: none;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+  }
+  
+  .review-item:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  }
+  
+  .rating-display {
+    color: #f59e0b;
+    font-size: 1.2rem;
+  }
+  
+  .reviewer-badge {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: white;
+    font-weight: bold;
+  }
+</style>
+
+<!-- Destination Header -->
+<div class="destination-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb text-white-50">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'destination_list' %}" class="text-white">Destinations</a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">{{ destination.name }}</li>
+      </ol>
+    </nav>
+    <h1 class="display-5 fw-bold mb-2">
+      <i class="fas fa-star me-2"></i>Reviews for {{ destination.name }}
+    </h1>
+    <p class="lead mb-0">
+      <i class="fas fa-map-marker-alt me-2"></i>{{ destination.country }}
+    </p>
+  </div>
+</div>
+
+<!-- Reviews List -->
+<div class="container py-5">
+  <div class="mb-4 d-flex justify-content-between align-items-center">
+    <h3 class="mb-0">Traveler Reviews</h3>
+    {% if user.is_authenticated %}
+    <a href="{% url 'review_create' destination_id=destination.id %}" class="btn btn-primary">
+      <i class="fas fa-plus me-2"></i>Add Your Review
+    </a>
+    {% endif %}
+  </div>
+  
+  <div class="row g-4">
     {% for review in reviews %}
-    <div class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ review.traveler.name }}</h5>
-            <small>Rating: {{ review.rating }}/10</small>
+    <div class="col-lg-6">
+      <div class="card review-item shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="reviewer-badge me-3">
+              {{ review.traveler.name|first|upper }}
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="mb-1 fw-bold">{{ review.traveler.name }}</h6>
+              <div class="rating-display">
+                {% for i in "12345678910"|slice:":"|make_list %}
+                  {% if forloop.counter <= review.rating %}
+                    <i class="fas fa-star"></i>
+                  {% else %}
+                    <i class="far fa-star"></i>
+                  {% endif %}
+                {% endfor %}
+                <span class="text-dark ms-2">{{ review.rating }}/10</span>
+              </div>
+            </div>
+          </div>
+          <p class="card-text text-muted">{{ review.comment }}</p>
         </div>
-        <p class="mb-1">{{ review.comment }}</p>
+      </div>
     </div>
     {% empty %}
-    <div class="list-group-item">No reviews available for this destination.</div>
+    <div class="col-12">
+      <div class="text-center py-5">
+        <i class="fas fa-star text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+        <h4 class="mt-3 text-muted">No reviews available for this destination</h4>
+        <p class="text-muted">Be the first to share your experience!</p>
+      </div>
+    </div>
     {% endfor %}
+  </div>
+  
+  <div class="mt-5">
+    {% if user.is_authenticated %}
+    <a href="{% url 'review_create' destination_id=destination.id %}" class="btn btn-primary me-2">
+      <i class="fas fa-plus me-2"></i>Add Review
+    </a>
+    {% else %}
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle me-2"></i>
+      Please <a href="{% url 'login' %}" class="alert-link">login</a> to add a review.
+    </div>
+    {% endif %}
+    <a href="{% url 'destination_list' %}" class="btn btn-outline-primary">
+      <i class="fas fa-arrow-left me-2"></i>Back to Destinations
+    </a>
+    <a href="{% url 'activities_page' destination_id=destination.id %}" class="btn btn-outline-primary ms-2">
+      <i class="fas fa-hiking me-2"></i>View Activities
+    </a>
+  </div>
 </div>
-<a href="{% url 'destination_list' %}" class="btn btn-outline-primary mt-3">Back to Destinations</a>
 {% endblock %}

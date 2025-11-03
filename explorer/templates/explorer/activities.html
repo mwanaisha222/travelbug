@@ -4,17 +4,92 @@
 {% block title %}Activities in {{ destination.name }}{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Activities in {{ destination.name }}, {{ destination.country }}</h1>
-<ul class="list-group">
+<style>
+  .destination-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+  }
+  
+  .activity-item {
+    border: none;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+  }
+  
+  .activity-item:hover {
+    transform: translateX(8px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  }
+  
+  .cost-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+</style>
+
+<!-- Destination Header -->
+<div class="destination-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb text-white-50">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'destination_list' %}" class="text-white">Destinations</a></li>
+        <li class="breadcrumb-item active text-white" aria-current="page">{{ destination.name }}</li>
+      </ol>
+    </nav>
+    <h1 class="display-5 fw-bold mb-2">
+      <i class="fas fa-hiking me-2"></i>Activities in {{ destination.name }}
+    </h1>
+    <p class="lead mb-0">
+      <i class="fas fa-map-marker-alt me-2"></i>{{ destination.country }}
+    </p>
+  </div>
+</div>
+
+<!-- Activities List -->
+<div class="container py-5">
+  <div class="mb-4">
+    <h3 class="mb-3">Available Activities</h3>
+  </div>
+  
+  <div class="row g-4">
     {% for activity in activities %}
-    <li class="list-group-item">
-        <h5 class="mb-1">{{ activity.name }}</h5>
-        <p class="mb-1">{{ activity.description }}</p>
-        <small class="text-muted">Estimated Cost: ${{ activity.cost_estimate }}</small>
-    </li>
+    <div class="col-md-6">
+      <div class="card activity-item shadow-sm h-100">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <h5 class="card-title fw-bold mb-0">
+              <i class="fas fa-compass text-primary me-2"></i>{{ activity.name }}
+            </h5>
+            <span class="cost-tag">${{ activity.cost_estimate }}</span>
+          </div>
+          <p class="card-text text-muted">{{ activity.description }}</p>
+        </div>
+      </div>
+    </div>
     {% empty %}
-    <li class="list-group-item">No activities available for this destination.</li>
+    <div class="col-12">
+      <div class="text-center py-5">
+        <i class="fas fa-hiking text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+        <h4 class="mt-3 text-muted">No activities available for this destination</h4>
+      </div>
+    </div>
     {% endfor %}
-</ul>
-<a href="{% url 'destination_list' %}" class="btn btn-outline-primary mt-3">Back to Destinations</a>
+  </div>
+  
+  <div class="mt-5">
+    <a href="{% url 'destination_list' %}" class="btn btn-outline-primary">
+      <i class="fas fa-arrow-left me-2"></i>Back to Destinations
+    </a>
+    <a href="{% url 'reviews_page' destination_id=destination.id %}" class="btn btn-primary ms-2">
+      <i class="fas fa-star me-2"></i>View Reviews
+    </a>
+  </div>
+</div>
 {% endblock %}

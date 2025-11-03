@@ -1,0 +1,107 @@
+{% extends 'explorer/base.html' %}
+
+{% block title %}Travelers{% endblock %}
+
+{% block content %}
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4rem 0 2rem;
+  }
+  
+  .traveler-card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .traveler-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  }
+  
+  .traveler-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .favorite-badge {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+  }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+  <div class="container">
+    <div class="text-center">
+      <h1 class="display-5 fw-bold mb-3">
+        <i class="fas fa-users me-2"></i>Travel Community
+      </h1>
+      <p class="lead mb-0">Meet fellow adventurers from around the world</p>
+    </div>
+  </div>
+</div>
+
+<!-- Travelers Grid -->
+<div class="container py-5">
+  <div class="mb-4">
+    <h3 class="mb-0">
+      <span class="badge bg-primary rounded-pill">{{ travelers|length }}</span> Travelers
+    </h3>
+  </div>
+  
+  <div class="row g-4">
+    {% for traveler in travelers %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card traveler-card shadow-sm h-100">
+        <div class="card-body text-center">
+          <div class="traveler-avatar mx-auto mb-3">
+            {{ traveler.name|first|upper }}
+          </div>
+          <h5 class="card-title fw-bold mb-2">
+            <a href="{% url 'traveler_profile' traveler_id=traveler.id %}" class="text-decoration-none text-dark">
+              {{ traveler.name }}
+            </a>
+          </h5>
+          <p class="text-muted small mb-3">
+            <i class="fas fa-envelope me-1"></i>{{ traveler.email }}
+          </p>
+          {% if traveler.favorite_destination %}
+          <div class="favorite-badge d-inline-block mb-3">
+            <i class="fas fa-heart me-1"></i>Loves {{ traveler.favorite_destination.name }}
+          </div>
+          {% endif %}
+          <div>
+            <a href="{% url 'traveler_profile' traveler_id=traveler.id %}" class="btn btn-primary btn-sm">
+              <i class="fas fa-user me-1"></i>View Profile
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+      <div class="text-center py-5">
+        <i class="fas fa-users text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+        <h4 class="mt-3 text-muted">No travelers found</h4>
+        <p class="text-muted">Be the first to join our community!</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

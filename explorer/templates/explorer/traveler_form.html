@@ -1,0 +1,101 @@
+{% extends 'explorer/base.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<style>
+  .form-container {
+    max-width: 600px;
+    margin: 3rem auto;
+  }
+  
+  .form-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  
+  .form-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px 15px 0 0;
+  }
+  
+  .form-control:focus, .form-select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+  }
+  
+  .btn-submit {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    border: none;
+    padding: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .btn-submit:hover {
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  }
+</style>
+
+<div class="form-container">
+  <div class="card form-card">
+    <div class="form-header text-center">
+      <i class="fas fa-user-edit fa-3x mb-3"></i>
+      <h2 class="mb-0">Edit Your Profile</h2>
+      <p class="mb-0 mt-2 opacity-75">Update your traveler information</p>
+    </div>
+    <div class="card-body p-4">
+      <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+          <label for="id_name" class="form-label fw-bold">
+            <i class="fas fa-user text-primary me-2"></i>Name
+          </label>
+          <input type="text" name="name" class="form-control" id="id_name" 
+                 value="{{ form.name.value|default_if_none:'' }}" required>
+          {% if form.name.errors %}
+            <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_email" class="form-label fw-bold">
+            <i class="fas fa-envelope text-primary me-2"></i>Email Address
+          </label>
+          <input type="email" name="email" class="form-control" id="id_email" 
+                 value="{{ form.email.value|default_if_none:'' }}" required>
+          {% if form.email.errors %}
+            <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-4">
+          <label for="id_favorite_destination" class="form-label fw-bold">
+            <i class="fas fa-heart text-primary me-2"></i>Favorite Destination
+          </label>
+          <select name="favorite_destination" class="form-select" id="id_favorite_destination">
+            <option value="">Select a destination...</option>
+            {{ form.favorite_destination }}
+          </select>
+          {% if form.favorite_destination.errors %}
+            <div class="text-danger small mt-1">{{ form.favorite_destination.errors }}</div>
+          {% endif %}
+          <div class="form-text">Choose your favorite travel destination</div>
+        </div>
+        
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-submit btn-primary flex-fill">
+            <i class="fas fa-save me-2"></i>Save Changes
+          </button>
+          <a href="{% url 'travelers_list' %}" class="btn btn-outline-secondary">
+            Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

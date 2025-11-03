@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Destination(models.Model):
     name = models.CharField(max_length=100)
@@ -23,6 +24,8 @@ class Traveler(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField()
     favorite_destination = models.ForeignKey(Destination, on_delete=models.SET_NULL, null=True, blank=True)
+    # Optional link to Django User for authentication
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.name

@@ -53,7 +53,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="{% url 'destination_list' %}">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
                 <i class="fas fa-plane text-primary me-2"></i>
                 TravelBucket
             </a>
@@ -63,31 +63,87 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">
+                            <i class="fas fa-home me-1"></i>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'destination_list' %}">
                             <i class="fas fa-map-marker-alt me-1"></i>Destinations
                         </a>
                     </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'destination_list' %}">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'activities_list' %}">
                             <i class="fas fa-map-marker-alt me-1"></i>Activities
                         </a>
                     </li>
                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'destination_list' %}">
-                            <i class="fas fa-map-marker-alt me-1"></i>Travelers
+                        <a class="nav-link" href="{% url 'travelers_list' %}">
+                            <i class="fas fa-users me-1"></i>Travelers
                         </a>
                     </li>
 
                      <li class="nav-item">
-                        <a class="nav-link" href="{% url 'destination_list' %}">
-                            <i class="fas fa-map-marker-alt me-1"></i>Reviews
+                        <a class="nav-link" href="{% url 'reviews_list' %}">
+                            <i class="fas fa-star me-1"></i>Reviews
                         </a>
                     </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'analytics' %}">
+                            <i class="fas fa-chart-line me-1"></i>Analytics
+                        </a>
+                    </li>
+                    
                     <!-- Add more navigation items as needed -->
+                    {% if user.is_authenticated and user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'destination_create' %}">
+                            <i class="fas fa-plus me-1"></i>Add destination
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'traveler_edit' %}">My Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'login' %}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'register' %}">Register</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>
     </nav>
+    
+    <!-- Messages Display -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {% if message.tags == 'success' %}
+                <i class="fas fa-check-circle me-2"></i>
+            {% elif message.tags == 'error' %}
+                <i class="fas fa-exclamation-circle me-2"></i>
+            {% elif message.tags == 'warning' %}
+                <i class="fas fa-exclamation-triangle me-2"></i>
+            {% else %}
+                <i class="fas fa-info-circle me-2"></i>
+            {% endif %}
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
     
     <div class="container-fluid px-0">
         {% block content %}{% endblock %}

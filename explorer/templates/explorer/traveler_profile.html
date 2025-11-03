@@ -4,11 +4,181 @@
 {% block title %}{{ traveler.name }}'s Profile{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">{{ traveler.name }}'s Profile</h1>
-<div class="card">
-    <div class="card-body">
-        <p><strong>Email:</strong> {{ traveler.email }}</p>
-        <p><strong>Favorite Destination:</strong> {% if traveler.favorite_destination %}{{ traveler.favorite_destination.name }}, {{ traveler.favorite_destination.country }}{% else %}None selected{% endif %}</p>
+<style>
+  .profile-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+    color: white;
+    padding: 3rem 0;
+  }
+  
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: #3b82f6;
+    font-weight: bold;
+    border: 5px solid rgba(255,255,255,0.3);
+    margin: 0 auto 1rem;
+  }
+  
+  .info-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  }
+  
+  .info-item {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .info-item:last-child {
+    border-bottom: none;
+  }
+  
+  .info-label {
+    color: #64748b;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+  }
+  
+  .info-value {
+    color: #1e293b;
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+</style>
+
+<!-- Profile Header -->
+<div class="profile-header">
+  <div class="container text-center">
+    <div class="profile-avatar">
+      {{ traveler.name|first|upper }}
     </div>
+    <h1 class="display-6 fw-bold mb-2">{{ traveler.name }}</h1>
+    <p class="lead mb-0 opacity-75">
+      <i class="fas fa-user me-2"></i>Traveler Profile
+    </p>
+  </div>
 </div>
+
+<!-- Profile Details -->
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card info-card mb-4">
+        <div class="card-body p-0">
+          <div class="info-item">
+            <div class="info-label">
+              <i class="fas fa-envelope me-2"></i>Email Address
+            </div>
+            <div class="info-value">{{ traveler.email }}</div>
+          </div>
+          
+          <div class="info-item">
+            <div class="info-label">
+              <i class="fas fa-heart me-2"></i>Favorite Destination
+            </div>
+            <div class="info-value">
+              {% if traveler.favorite_destination %}
+                <a href="{% url 'activities_page' destination_id=traveler.favorite_destination.id %}" class="text-decoration-none">
+                  {{ traveler.favorite_destination.name }}, {{ traveler.favorite_destination.country }}
+                </a>
+              {% else %}
+                <span class="text-muted">No favorite destination selected</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center">
+        {% if user.is_authenticated and user.traveler == traveler %}
+        <a href="{% url 'traveler_edit' %}" class="btn btn-primary me-2">
+          <i class="fas fa-edit me-2"></i>Edit Profile
+        </a>
+        {% endif %}
+        <a href="{% url 'travelers_list' %}" class="btn btn-outline-primary">
+          <i class="fas fa-arrow-left me-2"></i>Back to Travelers
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Reviews Section -->
+  {% if reviews %}
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-10">
+      <h3 class="mb-4">
+        <i class="fas fa-star text-warning me-2"></i>Reviews by {{ traveler.name }}
+        <span class="badge bg-primary rounded-pill">{{ reviews|length }}</span>
+      </h3>
+      
+      <div class="row g-4">
+        {% for review in reviews %}
+        <div class="col-lg-6">
+          <div class="card review-item shadow-sm h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="flex-grow-1">
+                  <h5 class="card-title fw-bold mb-2">
+                    <a href="{% url 'reviews_page' destination_id=review.destination.id %}" class="text-decoration-none">
+                      {{ review.destination.name }}
+                    </a>
+                  </h5>
+                  <p class="text-muted small mb-0">
+                    <i class="fas fa-map-marker-alt me-1"></i>{{ review.destination.country }}
+                  </p>
+                </div>
+                <div class="rating-display">
+                  {% for i in "12345678910"|slice:":"|make_list %}
+                    {% if forloop.counter <= review.rating %}
+                      <i class="fas fa-star"></i>
+                    {% else %}
+                      <i class="far fa-star"></i>
+                    {% endif %}
+                  {% endfor %}
+                  <span class="text-dark ms-2 fw-bold">{{ review.rating }}/10</span>
+                </div>
+              </div>
+              <p class="card-text text-muted">{{ review.comment }}</p>
+              <a href="{% url 'reviews_page' destination_id=review.destination.id %}" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-eye me-1"></i>View all reviews
+              </a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<style>
+  .review-item {
+    border: none;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+    transition: all 0.3s ease;
+  }
+  
+  .review-item:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  }
+  
+  .rating-display {
+    color: #f59e0b;
+    font-size: 0.9rem;
+  }
+</style>
+
 {% endblock %}

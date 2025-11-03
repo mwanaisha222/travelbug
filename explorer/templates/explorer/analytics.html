@@ -1,0 +1,288 @@
+{% extends 'explorer/base.html' %}
+
+{% block title %}Analytics Dashboard - TravelBug{% endblock %}
+
+{% block content %}
+<style>
+  .analytics-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 0;
+  }
+  
+  .dashboard-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0 3rem;
+  }
+  
+  .stat-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .charts-section {
+    background: #f8fafc;
+    padding: 3rem 0;
+  }
+  
+  .chart-container {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .chart-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 3px solid #667eea;
+  }
+  
+  .section-header {
+    text-align: center;
+    margin: 3rem 0 2rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+  }
+  
+  .section-subtitle {
+    color: #718096;
+    font-size: 1.1rem;
+  }
+  
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .grid-2 {
+      grid-template-columns: 1fr;
+    }
+    
+    .stat-number {
+      font-size: 2rem;
+    }
+  }
+  
+  .no-data {
+    text-align: center;
+    padding: 3rem;
+    color: #718096;
+    font-size: 1.1rem;
+  }
+</style>
+
+<div class="analytics-container">
+  <div class="container">
+    <div class="dashboard-header">
+      <h1 class="display-4 mb-3">
+        <i class="fas fa-chart-line me-3"></i>Analytics Dashboard
+      </h1>
+      <p class="lead">Comprehensive insights into Uganda travel data</p>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card">
+        <i class="fas fa-map-marker-alt fa-2x mb-3"></i>
+        <span class="stat-number">{{ summary.total_destinations }}</span>
+        <span class="stat-label">Destinations</span>
+      </div>
+      
+      <div class="stat-card">
+        <i class="fas fa-star fa-2x mb-3"></i>
+        <span class="stat-number">{{ summary.total_reviews }}</span>
+        <span class="stat-label">Reviews</span>
+      </div>
+      
+      <div class="stat-card">
+        <i class="fas fa-users fa-2x mb-3"></i>
+        <span class="stat-number">{{ summary.total_travelers }}</span>
+        <span class="stat-label">Travelers</span>
+      </div>
+      
+      <div class="stat-card">
+        <i class="fas fa-hiking fa-2x mb-3"></i>
+        <span class="stat-number">{{ summary.total_activities }}</span>
+        <span class="stat-label">Activities</span>
+      </div>
+      
+      <div class="stat-card">
+        <i class="fas fa-chart-bar fa-2x mb-3"></i>
+        <span class="stat-number">{{ summary.average_rating }}</span>
+        <span class="stat-label">Avg Rating</span>
+      </div>
+      
+      <div class="stat-card">
+        <i class="fas fa-trophy fa-2x mb-3"></i>
+        <span class="stat-number" style="font-size: 1.2rem;">{{ summary.top_destination }}</span>
+        <span class="stat-label">Top Destination</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="charts-section">
+  <div class="container">
+    
+    <!-- Destination Popularity -->
+    <div class="section-header">
+      <h2 class="section-title">Destination Performance</h2>
+      <p class="section-subtitle">Analyzing popularity and ratings across Uganda destinations</p>
+    </div>
+    
+    <div class="grid-2">
+      <div class="chart-container">
+        {% if destination_popularity %}
+          {{ destination_popularity|safe }}
+        {% else %}
+          <div class="no-data">
+            <i class="fas fa-chart-bar fa-3x mb-3"></i>
+            <p>No data available yet</p>
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="chart-container">
+        {% if destination_ratings %}
+          {{ destination_ratings|safe }}
+        {% else %}
+          <div class="no-data">
+            <i class="fas fa-chart-bar fa-3x mb-3"></i>
+            <p>No data available yet</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- Multi-metric Comparison -->
+    <div class="chart-container">
+      {% if top_destinations_comparison %}
+        {{ top_destinations_comparison|safe }}
+      {% else %}
+        <div class="no-data">
+          <i class="fas fa-chart-bar fa-3x mb-3"></i>
+          <p>No data available yet</p>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Activities and Preferences -->
+    <div class="section-header">
+      <h2 class="section-title">Activities & Traveler Preferences</h2>
+      <p class="section-subtitle">Understanding what travelers love most</p>
+    </div>
+    
+    <div class="grid-2">
+      <div class="chart-container">
+        {% if activity_distribution %}
+          {{ activity_distribution|safe }}
+        {% else %}
+          <div class="no-data">
+            <i class="fas fa-chart-pie fa-3x mb-3"></i>
+            <p>No data available yet</p>
+          </div>
+        {% endif %}
+      </div>
+      
+      <div class="chart-container">
+        {% if traveler_preferences %}
+          {{ traveler_preferences|safe }}
+        {% else %}
+          <div class="no-data">
+            <i class="fas fa-chart-pie fa-3x mb-3"></i>
+            <p>No data available yet</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+    
+    <!-- Rating Trends -->
+    <div class="section-header">
+      <h2 class="section-title">Rating Analysis</h2>
+      <p class="section-subtitle">Tracking review patterns and trends</p>
+    </div>
+    
+    <div class="chart-container">
+      {% if rating_trends %}
+        {{ rating_trends|safe }}
+      {% else %}
+        <div class="no-data">
+          <i class="fas fa-chart-line fa-3x mb-3"></i>
+          <p>No data available yet</p>
+        </div>
+      {% endif %}
+    </div>
+    
+    <div class="chart-container">
+      {% if rating_distribution %}
+        {{ rating_distribution|safe }}
+      {% else %}
+        <div class="no-data">
+          <i class="fas fa-chart-bar fa-3x mb-3"></i>
+          <p>No data available yet</p>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Seasonal Tourism -->
+    <div class="section-header">
+      <h2 class="section-title">Seasonal Tourism Patterns</h2>
+      <p class="section-subtitle">Best times to visit Uganda destinations</p>
+    </div>
+    
+    <div class="chart-container">
+      {% if seasonal_heatmap %}
+        {{ seasonal_heatmap|safe }}
+      {% else %}
+        <div class="no-data">
+          <i class="fas fa-calendar-alt fa-3x mb-3"></i>
+          <p>No data available yet</p>
+        </div>
+      {% endif %}
+    </div>
+    
+  </div>
+</div>
+{% endblock %}

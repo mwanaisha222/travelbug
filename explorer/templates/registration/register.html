@@ -1,0 +1,115 @@
+{% extends 'explorer/base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<style>
+  .register-container {
+    max-width: 500px;
+    margin: 3rem auto;
+  }
+  
+  .register-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  
+  .register-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px 15px 0 0;
+  }
+  
+  .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  }
+  
+  .btn-register {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .btn-register:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  }
+</style>
+
+<div class="register-container">
+  <div class="card register-card">
+    <div class="register-header text-center">
+      <i class="fas fa-user-plus fa-3x mb-3"></i>
+      <h2 class="mb-0">Create Account</h2>
+      <p class="mb-0 mt-2 opacity-75">Join the TravelBucket community</p>
+    </div>
+    <div class="card-body p-4">
+      <form method="post">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+        
+        <div class="mb-3">
+          <label for="id_username" class="form-label fw-bold">Username</label>
+          <input type="text" name="username" class="form-control" id="id_username" required 
+                 value="{{ form.username.value|default_if_none:'' }}">
+          {% if form.username.errors %}
+            <div class="text-danger small mt-1">{{ form.username.errors }}</div>
+          {% endif %}
+          <div class="form-text">Required. 150 characters or fewer.</div>
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_name" class="form-label fw-bold">Full Name</label>
+          <input type="text" name="name" class="form-control" id="id_name" required
+                 value="{{ form.name.value|default_if_none:'' }}">
+          {% if form.name.errors %}
+            <div class="text-danger small mt-1">{{ form.name.errors }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_email" class="form-label fw-bold">Email Address</label>
+          <input type="email" name="email" class="form-control" id="id_email" required
+                 value="{{ form.email.value|default_if_none:'' }}">
+          {% if form.email.errors %}
+            <div class="text-danger small mt-1">{{ form.email.errors }}</div>
+          {% endif %}
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_password1" class="form-label fw-bold">Password</label>
+          <input type="password" name="password1" class="form-control" id="id_password1" required>
+          {% if form.password1.errors %}
+            <div class="text-danger small mt-1">{{ form.password1.errors }}</div>
+          {% endif %}
+          <div class="form-text">Must contain at least 8 characters.</div>
+        </div>
+        
+        <div class="mb-4">
+          <label for="id_password2" class="form-label fw-bold">Confirm Password</label>
+          <input type="password" name="password2" class="form-control" id="id_password2" required>
+          {% if form.password2.errors %}
+            <div class="text-danger small mt-1">{{ form.password2.errors }}</div>
+          {% endif %}
+        </div>
+        
+        <button type="submit" class="btn btn-register btn-primary w-100 mb-3">
+          <i class="fas fa-user-plus me-2"></i>Create Account
+        </button>
+        
+        <div class="text-center">
+          <p class="mb-0">Already have an account? <a href="{% url 'login' %}" class="text-decoration-none">Login here</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

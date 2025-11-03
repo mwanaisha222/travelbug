@@ -1,11 +1,398 @@
 <!-- explorer/templates/explorer/destination_form.html -->
 {% extends 'explorer/base.html' %}
 
+{% block title %}Add New Destination{% endblock %}
+
 {% block content %}
-<h2>Add New Destination</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Add Destination</button>
-</form>
+<style>
+  .admin-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  .admin-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+  }
+  
+  .admin-badge {
+    background: rgba(255,255,255,0.25);
+    padding: 0.5rem 1.25rem;
+    border-radius: 30px;
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  
+  .form-card {
+    background: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  
+  .form-section {
+    padding: 2rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1.75rem;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+  
+  .form-label i {
+    color: #667eea;
+    width: 24px;
+  }
+  
+  .form-control, .form-select {
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+  }
+  
+  .form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    outline: none;
+  }
+  
+  .form-control::placeholder {
+    color: #a0aec0;
+  }
+  
+  textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+  }
+  
+  .image-upload-area {
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #f7fafc;
+  }
+  
+  .image-upload-area:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+  }
+  
+  .image-upload-area.dragover {
+    border-color: #667eea;
+    background: #e6f0ff;
+  }
+  
+  .image-preview-container {
+    margin-top: 1rem;
+    display: none;
+  }
+  
+  .image-preview {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  }
+  
+  .upload-icon {
+    font-size: 3rem;
+    color: #667eea;
+    margin-bottom: 1rem;
+  }
+  
+  .btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    padding: 1rem 2.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+  
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+  
+  .btn-cancel {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+  
+  .info-text {
+    font-size: 0.85rem;
+    color: #718096;
+    margin-top: 0.5rem;
+  }
+  
+  .error-message {
+    background: #fff5f5;
+    color: #c53030;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    border-left: 4px solid #fc8181;
+  }
+  
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .stat-card {
+    background: rgba(255,255,255,0.15);
+    padding: 1.25rem;
+    border-radius: 12px;
+    text-align: center;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    display: block;
+  }
+  
+  .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+  }
+</style>
+
+<div class="admin-container">
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <div class="text-center">
+      <span class="admin-badge mb-3 d-inline-block">
+        <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+      </span>
+      <h1 class="mb-2">
+        <i class="fas fa-globe-americas me-3"></i>Add New Destination
+      </h1>
+      <p class="mb-0 opacity-90">Create a new travel destination for the TravelBug community</p>
+    </div>
+    
+    <!-- Quick Stats -->
+    <div class="stats-row mt-4">
+      <div class="stat-card">
+        <span class="stat-number">{{ total_destinations|default:"0" }}</span>
+        <span class="stat-label">Total Destinations</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ total_reviews|default:"0" }}</span>
+        <span class="stat-label">Total Reviews</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">{{ total_travelers|default:"0" }}</span>
+        <span class="stat-label">Registered Travelers</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="form-card">
+    <div class="form-section">
+      <form method="post" enctype="multipart/form-data" id="destinationForm">
+      <form method="post" enctype="multipart/form-data" id="destinationForm">
+        {% csrf_token %}
+        
+        <!-- Destination Name -->
+        <div class="form-group">
+          <label for="id_name" class="form-label">
+            <i class="fas fa-map-marker-alt me-2"></i>Destination Name
+          </label>
+          <input type="text" name="name" class="form-control" id="id_name" 
+                 placeholder="e.g., Santorini, Bali, Machu Picchu" 
+                 value="{{ form.name.value|default:'' }}" required>
+          {% if form.name.errors %}
+            <div class="error-message">{{ form.name.errors.0 }}</div>
+          {% endif %}
+          <div class="info-text">Enter the official name of the destination</div>
+        </div>
+        
+        <!-- Country -->
+        <div class="form-group">
+          <label for="id_country" class="form-label">
+            <i class="fas fa-flag me-2"></i>Country
+          </label>
+          <input type="text" name="country" class="form-control" id="id_country" 
+                 placeholder="e.g., Greece, Indonesia, Peru" 
+                 value="{{ form.country.value|default:'' }}" required>
+          {% if form.country.errors %}
+            <div class="error-message">{{ form.country.errors.0 }}</div>
+          {% endif %}
+          <div class="info-text">Specify the country where this destination is located</div>
+        </div>
+        
+        <!-- Description -->
+        <div class="form-group">
+          <label for="id_description" class="form-label">
+            <i class="fas fa-align-left me-2"></i>Description
+          </label>
+          <textarea name="description" class="form-control" id="id_description" rows="5" 
+                    placeholder="Describe what makes this destination unique and special. Include highlights, attractions, and why travelers should visit..." required>{{ form.description.value|default:'' }}</textarea>
+          {% if form.description.errors %}
+            <div class="error-message">{{ form.description.errors.0 }}</div>
+          {% endif %}
+          <div class="info-text">Provide a compelling description (minimum 50 characters recommended)</div>
+        </div>
+        
+        <!-- Best Season -->
+        <div class="form-group">
+          <label for="id_best_season" class="form-label">
+            <i class="fas fa-calendar-alt me-2"></i>Best Season to Visit
+          </label>
+          <input type="text" name="best_season" class="form-control" id="id_best_season" 
+                 placeholder="e.g., Spring (March-May), Year-round, Winter months" 
+                 value="{{ form.best_season.value|default:'' }}" required>
+          {% if form.best_season.errors %}
+            <div class="error-message">{{ form.best_season.errors.0 }}</div>
+          {% endif %}
+          <div class="info-text">Indicate the ideal time of year to visit this destination</div>
+        </div>
+        
+        <!-- Image Upload -->
+        <div class="form-group">
+          <label for="id_image" class="form-label">
+            <i class="fas fa-camera me-2"></i>Destination Image
+          </label>
+          
+          <div class="image-upload-area" id="imageUploadArea">
+            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+            <h5>Click to upload or drag and drop</h5>
+            <p class="text-muted mb-0">PNG, JPG, JPEG up to 10MB</p>
+            <input type="file" name="image" class="d-none" id="id_image" accept="image/*">
+          </div>
+          
+          {% if form.image.errors %}
+            <div class="error-message">{{ form.image.errors.0 }}</div>
+          {% endif %}
+          
+          <div class="image-preview-container" id="imagePreviewContainer">
+            <img src="" alt="Preview" class="image-preview" id="imagePreview">
+            <div class="text-center mt-2">
+              <button type="button" class="btn btn-sm btn-outline-danger" id="removeImage">
+                <i class="fas fa-trash me-1"></i>Remove Image
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Form Actions -->
+        <div class="d-flex gap-3 justify-content-end mt-4 pt-3 border-top">
+          <a href="{% url 'destination_list' %}" class="btn btn-outline-secondary btn-cancel">
+            <i class="fas fa-times me-2"></i>Cancel
+          </a>
+          <button type="submit" class="btn btn-primary btn-submit">
+            <i class="fas fa-check me-2"></i>Create Destination
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Image upload and preview functionality
+  const imageUploadArea = document.getElementById('imageUploadArea');
+  const imageInput = document.getElementById('id_image');
+  const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+  const imagePreview = document.getElementById('imagePreview');
+  const removeImageBtn = document.getElementById('removeImage');
+  
+  // Click to upload
+  imageUploadArea.addEventListener('click', () => {
+    imageInput.click();
+  });
+  
+  // Handle file selection
+  imageInput.addEventListener('change', (e) => {
+    handleImageSelect(e.target.files[0]);
+  });
+  
+  // Drag and drop
+  imageUploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    imageUploadArea.classList.add('dragover');
+  });
+  
+  imageUploadArea.addEventListener('dragleave', () => {
+    imageUploadArea.classList.remove('dragover');
+  });
+  
+  imageUploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    imageUploadArea.classList.remove('dragover');
+    
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      imageInput.files = dataTransfer.files;
+      handleImageSelect(file);
+    }
+  });
+  
+  // Preview image
+  function handleImageSelect(file) {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview.src = e.target.result;
+        imagePreviewContainer.style.display = 'block';
+        imageUploadArea.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  
+  // Remove image
+  removeImageBtn.addEventListener('click', () => {
+    imageInput.value = '';
+    imagePreview.src = '';
+    imagePreviewContainer.style.display = 'none';
+    imageUploadArea.style.display = 'block';
+  });
+  
+  // Form validation
+  document.getElementById('destinationForm').addEventListener('submit', (e) => {
+    const name = document.getElementById('id_name').value.trim();
+    const country = document.getElementById('id_country').value.trim();
+    const description = document.getElementById('id_description').value.trim();
+    
+    if (description.length < 20) {
+      e.preventDefault();
+      alert('Please provide a more detailed description (at least 20 characters).');
+      return false;
+    }
+  });
+</script>
 {% endblock %}
