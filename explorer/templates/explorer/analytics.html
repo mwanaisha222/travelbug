@@ -21,6 +21,10 @@
     box-sizing: border-box;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background-color: #f5f7fa;
@@ -118,6 +122,11 @@
     margin-left: 240px;
     flex: 1;
     padding: 0;
+    scroll-padding-top: 100px;
+  }
+
+  .content-container > div {
+    scroll-margin-top: 100px;
   }
 
   .top-header {
@@ -423,11 +432,28 @@
     margin-bottom: 2rem;
   }
 
+  .activity-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .activity-card-link:hover {
+    transform: translateY(-4px);
+  }
+
+  .activity-card-link:hover .activity-card {
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  }
+
   .activity-card {
     background: white;
     border-radius: 12px;
     padding: 1rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: box-shadow 0.2s;
+    cursor: pointer;
   }
 
   .activity-header {
@@ -553,13 +579,17 @@
     </div>
 
     <div class="sidebar-section">
-      <div class="sidebar-section-title">Work</div>
+      <div class="sidebar-section-title">Visualizations</div>
       <ul class="sidebar-menu">
-        <li><a href="{% url 'destination_list' %}"><i class="fas fa-map-marked-alt"></i> Destinations</a></li>
-        <li><a href="{% url 'reviews_list' %}"><i class="fas fa-star"></i> Reviews</a></li>
-        <li><a href="{% url 'activities_list' %}"><i class="fas fa-hiking"></i> Activities</a></li>
-        <li><a href="{% url 'travelers_list' %}"><i class="fas fa-users"></i> Travelers</a></li>
-        <li><a href="{% url 'analytics' %}" class="active"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+        <li><a href="#overview" class="active"><i class="fas fa-th-large"></i> Overview</a></li>
+        <li><a href="#popularity"><i class="fas fa-chart-bar"></i> Destination Popularity</a></li>
+        <li><a href="#ratings"><i class="fas fa-star"></i> Destination Ratings</a></li>
+        <li><a href="#activities"><i class="fas fa-chart-pie"></i> Activity Distribution</a></li>
+        <li><a href="#preferences"><i class="fas fa-heart"></i> Traveler Favorites</a></li>
+        <li><a href="#trends"><i class="fas fa-chart-line"></i> Rating Trends</a></li>
+        <li><a href="#heatmap"><i class="fas fa-calendar-alt"></i> Visitor Heatmap</a></li>
+        <li><a href="#distribution"><i class="fas fa-chart-area"></i> Rating Distribution</a></li>
+        <li><a href="#comparison"><i class="fas fa-columns"></i> Top Destinations</a></li>
       </ul>
     </div>
 
@@ -588,94 +618,102 @@
     </div>
 
     <div class="content-container">
-      <div class="recent-activities">
-        <h2 class="section-title">Recent Activities</h2>
+      <div id="overview" class="recent-activities">
+        <h2 class="section-title">Overview</h2>
         <div class="activities-grid">
-          <div class="activity-card">
-            <div class="activity-header">
-              <div class="metric-icon"><i class="fas fa-map-marker-alt"></i></div>
-              <span class="activity-title">Destinations</span>
+          <a href="{% url 'destination_list' %}" class="activity-card-link">
+            <div class="activity-card">
+              <div class="activity-header">
+                <div class="metric-icon"><i class="fas fa-map-marker-alt"></i></div>
+                <span class="activity-title">Destinations</span>
+              </div>
+              <div class="activity-count">{{ summary.total_destinations }}</div>
+              <div class="metric-label"><span>/100</span></div>
             </div>
-            <div class="activity-count">{{ summary.total_destinations }}</div>
-            <div class="metric-label"><span>/100</span></div>
-          </div>
+          </a>
 
-          <div class="activity-card">
-            <div class="activity-header">
-              <div class="metric-icon"><i class="fas fa-comments"></i></div>
-              <span class="activity-title">Reviews</span>
+          <a href="{% url 'reviews_list' %}" class="activity-card-link">
+            <div class="activity-card">
+              <div class="activity-header">
+                <div class="metric-icon"><i class="fas fa-comments"></i></div>
+                <span class="activity-title">Reviews</span>
+              </div>
+              <div class="activity-count">{{ summary.total_reviews }}</div>
+              <div class="metric-label"><span>/100</span></div>
             </div>
-            <div class="activity-count">{{ summary.total_reviews }}</div>
-            <div class="metric-label"><span>/100</span></div>
-          </div>
+          </a>
 
-          <div class="activity-card">
-            <div class="activity-header">
-              <div class="metric-icon"><i class="fas fa-running"></i></div>
-              <span class="activity-title">Activities</span>
+          <a href="{% url 'activities_list' %}" class="activity-card-link">
+            <div class="activity-card">
+              <div class="activity-header">
+                <div class="metric-icon"><i class="fas fa-running"></i></div>
+                <span class="activity-title">Activities</span>
+              </div>
+              <div class="activity-count">{{ summary.total_activities }}</div>
+              <div class="metric-label"><span>/100</span></div>
             </div>
-            <div class="activity-count">{{ summary.total_activities }}</div>
-            <div class="metric-label"><span>/100</span></div>
-          </div>
+          </a>
 
-          <div class="activity-card">
-            <div class="activity-header">
-              <div class="metric-icon"><i class="fas fa-user-friends"></i></div>
-              <span class="activity-title">Travelers</span>
+          <a href="{% url 'travelers_list' %}" class="activity-card-link">
+            <div class="activity-card">
+              <div class="activity-header">
+                <div class="metric-icon"><i class="fas fa-user-friends"></i></div>
+                <span class="activity-title">Travelers</span>
+              </div>
+              <div class="activity-count">{{ summary.total_travelers }}</div>
+              <div class="metric-label"><span>/100</span></div>
             </div>
-            <div class="activity-count">{{ summary.total_travelers }}</div>
-            <div class="metric-label"><span>/100</span></div>
-          </div>
+          </a>
         </div>
       </div>
 
       <div class="chart-section">
         <h2 class="section-title">Analytics & Insights</h2>
 
-        <div class="charts-grid">
+        <div id="popularity" class="charts-grid">
           <div class="chart-box">
             <h3>Destination Popularity</h3>
             {{ destination_popularity|safe }}
           </div>
 
-          <div class="chart-box">
+          <div id="ratings" class="chart-box">
             <h3>Destination Ratings</h3>
             {{ destination_ratings|safe }}
           </div>
         </div>
 
-        <div class="charts-grid">
+        <div id="comparison" class="chart-box">
+          <h3>Top Destinations Comparison</h3>
+          {{ top_destinations_comparison|safe }}
+        </div>
+
+        <div id="activities" class="charts-grid">
           <div class="chart-box">
             <h3>Activity Distribution</h3>
             {{ activity_distribution|safe }}
           </div>
 
-          <div class="chart-box">
+          <div id="preferences" class="chart-box">
             <h3>Traveler Favorites</h3>
             {{ traveler_preferences|safe }}
           </div>
         </div>
 
-        <div class="chart-box">
+        <div id="trends" class="chart-box">
           <h3>Rating Trends</h3>
           {{ rating_trends|safe }}
         </div>
 
-        <div class="charts-grid">
+        <div id="heatmap" class="charts-grid">
           <div class="chart-box">
             <h3>Visitor Distribution by Month</h3>
             {{ seasonal_heatmap|safe }}
           </div>
 
-          <div class="chart-box">
+          <div id="distribution" class="chart-box">
             <h3>Rating Distribution</h3>
             {{ rating_distribution|safe }}
           </div>
-        </div>
-
-        <div class="chart-box">
-          <h3>Top Destinations Comparison</h3>
-          {{ top_destinations_comparison|safe }}
         </div>
       </div>
     </div>
