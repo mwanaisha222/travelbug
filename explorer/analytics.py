@@ -323,8 +323,10 @@ def generate_rating_trends_line():
             colorscale='Viridis',
             showscale=True,
             colorbar=dict(
-                title="Rating",
-                titleside="right",
+                title=dict(
+                    text="Rating",
+                    side="right"
+                ),
                 tickmode="linear",
                 tick0=0,
                 dtick=2

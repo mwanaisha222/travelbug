@@ -249,7 +249,7 @@ class ViewRegressionTest(TestCase):
         # Test very long strings at boundary conditions
         boundary_data = {
             'name': 'x' * 100,  # Exactly at max length
-y            'country': 'y' * 100,  # Exactly at max length
+            'country': 'y' * 100,  # Exactly at max length
             'description': 'z' * 1000,  # Very long description
             'best_season': 'w' * 50  # Exactly at max length
         }
