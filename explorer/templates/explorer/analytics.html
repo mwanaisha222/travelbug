@@ -4,298 +4,699 @@
 
 {% block content %}
 <style>
-  .analytics-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  :root {
+    --primary-blue: #3b82f6;
+    --secondary-blue: #1e40af;
+    --light-blue: #e0f2fe;
+    --accent-orange: #f97316;
+    --accent-purple: #8b5cf6;
+    --accent-green: #10b981;
+    --text-gray: #6b7280;
+    --dark-gray: #374151;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #f5f7fa;
+  }
+
+  .dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+    margin-top: -20px;
+  }
+
+  .sidebar {
+    width: 240px;
+    background: linear-gradient(180deg, var(--secondary-blue) 0%, #1e3a8a 100%);
     color: white;
-    padding: 3rem 0;
+    padding: 2rem 0;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
   }
-  
-  .dashboard-header {
-    text-align: center;
+
+  .sidebar-brand {
+    padding: 0 1.5rem;
     margin-bottom: 2rem;
   }
-  
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin: 2rem 0 3rem;
-  }
-  
-  .stat-card {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
-    padding: 1.5rem;
-    text-align: center;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: transform 0.3s ease;
-  }
-  
-  .stat-card:hover {
-    transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.2);
-  }
-  
-  .stat-number {
-    font-size: 2.5rem;
+
+  .sidebar-brand h2 {
+    font-size: 1.5rem;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+  }
+
+  .sidebar-brand small {
     display: block;
-    margin-bottom: 0.5rem;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 0.25rem;
+    margin-left: 2rem;
   }
-  
-  .stat-label {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  
-  .charts-section {
-    background: #f8fafc;
-    padding: 3rem 0;
-  }
-  
-  .chart-container {
-    background: white;
-    border-radius: 20px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  }
-  
-  .chart-title {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: #2d3748;
+
+  .sidebar-section {
     margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 3px solid #667eea;
   }
-  
-  .section-header {
-    text-align: center;
-    margin: 3rem 0 2rem;
+
+  .sidebar-section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    padding: 0 1.5rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.5px;
+    font-weight: 600;
   }
-  
-  .section-title {
+
+  .sidebar-menu {
+    list-style: none;
+  }
+
+  .sidebar-menu li {
+    margin-bottom: 0.25rem;
+  }
+
+  .sidebar-menu a {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+  }
+
+  .sidebar-menu a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+  }
+
+  .sidebar-menu a.active {
+    background-color: rgba(255,255,255,0.15);
+    color: white;
+    border-left-color: var(--primary-blue);
+  }
+
+  .sidebar-menu i {
+    width: 20px;
+    margin-right: 0.75rem;
+    font-size: 1rem;
+  }
+
+  .main-content {
+    margin-left: 240px;
+    flex: 1;
+    padding: 0;
+  }
+
+  .top-header {
+    background: white;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .top-header h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .search-box {
+    position: relative;
+  }
+
+  .search-box input {
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    width: 300px;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+  }
+
+  .search-box input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .search-box i {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-gray);
+  }
+
+  .filter-btn {
+    padding: 0.5rem 1.25rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    color: var(--dark-gray);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .filter-btn:hover {
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+  }
+
+  .content-container {
+    padding: 2rem;
+    max-width: 1600px;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .metric-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+
+  .metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .metric-card:nth-child(1) .metric-icon {
+    background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+    color: white;
+  }
+
+  .metric-card:nth-child(2) .metric-icon {
+    background: linear-gradient(135deg, var(--accent-orange), #ea580c);
+    color: white;
+  }
+
+  .metric-card:nth-child(3) .metric-icon {
+    background: linear-gradient(135deg, var(--accent-purple), #7c3aed);
+    color: white;
+  }
+
+  .metric-card:nth-child(4) .metric-icon {
+    background: linear-gradient(135deg, var(--accent-green), #059669);
+    color: white;
+  }
+
+  .metric-value {
     font-size: 2rem;
     font-weight: 700;
-    color: #2d3748;
-    margin-bottom: 0.5rem;
+    color: var(--dark-gray);
+    line-height: 1;
   }
-  
-  .section-subtitle {
-    color: #718096;
-    font-size: 1.1rem;
+
+  .metric-label {
+    font-size: 0.875rem;
+    color: var(--text-gray);
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  
-  .grid-2 {
+
+  .metric-warning {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    display: inline-block;
+  }
+
+  .audit-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .audit-header {
+    margin-bottom: 2rem;
+  }
+
+  .audit-header h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin-bottom: 0.25rem;
+  }
+
+  .filter-tags {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .filter-tag {
+    padding: 0.375rem 0.75rem;
+    background: #f3f4f6;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    color: var(--text-gray);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .audit-content {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 3rem;
+  }
+
+  .audit-score-circle {
+    position: relative;
+    width: 180px;
+    height: 180px;
+  }
+
+  .score-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .score-text .percentage {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+  }
+
+  .score-text .label {
+    font-size: 0.875rem;
+    color: var(--text-gray);
+  }
+
+  .audit-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .audit-item {
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 1rem;
+  }
+
+  .audit-item:last-child {
+    border-bottom: none;
+  }
+
+  .audit-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .audit-item-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+  }
+
+  .audit-item-stats {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.875rem;
+  }
+
+  .stat-complete {
+    color: var(--primary-blue);
+    font-weight: 600;
+  }
+
+  .stat-incomplete {
+    color: var(--text-gray);
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: #f3f4f6;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+    border-radius: 4px;
+    transition: width 0.3s ease;
+  }
+
+  .recent-activities {
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin-bottom: 1.5rem;
+  }
+
+  .activities-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .activity-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .activity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .activity-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--dark-gray);
+  }
+
+  .activity-count {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .activity-card:nth-child(1) .activity-count {
+    color: var(--accent-orange);
+  }
+
+  .activity-card:nth-child(2) .activity-count {
+    color: var(--accent-purple);
+  }
+
+  .activity-card:nth-child(3) .activity-count {
+    color: var(--primary-blue);
+  }
+
+  .activity-card:nth-child(4) .activity-count {
+    color: var(--accent-green);
+  }
+
+  .chart-section {
+    margin-bottom: 2rem;
+  }
+
+  .chart-box {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.2s;
+  }
+
+  .chart-box:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .chart-box h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin-bottom: 1.5rem;
+  }
+
+  .charts-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
   }
-  
-  @media (max-width: 1200px) {
-    .grid-2 {
+
+  @media (max-width: 1400px) {
+    .metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .activities-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+    }
+    .sidebar.active {
+      transform: translateX(0);
+    }
+    .main-content {
+      margin-left: 0;
+    }
+    .charts-grid {
       grid-template-columns: 1fr;
     }
-  }
-  
-  @media (max-width: 768px) {
-    .stat-number {
-      font-size: 2rem;
+    .audit-content {
+      grid-template-columns: 1fr;
+      gap: 2rem;
     }
   }
-  
-  /* Ensure pie charts have enough height */
-  .chart-container {
-    min-height: 550px;
-  }
-  
-  /* Prevent plotly charts from overflowing */
-  .chart-container .plotly {
-    width: 100% !important;
-    height: 100% !important;
-  }
-  
-  .no-data {
-    text-align: center;
-    padding: 3rem;
-    color: #718096;
-    font-size: 1.1rem;
+
+  @media (max-width: 768px) {
+    .metrics-grid,
+    .activities-grid {
+      grid-template-columns: 1fr;
+    }
+    .search-box input {
+      width: 200px;
+    }
+    .top-header h1 {
+      font-size: 1.25rem;
+    }
   }
 </style>
 
-<div class="analytics-container">
-  <div class="container">
-    <div class="dashboard-header">
-      <h1 class="display-4 mb-3">
-        <i class="fas fa-chart-line me-3"></i>Analytics Dashboard
-      </h1>
-      <p class="lead">Comprehensive insights into Uganda travel data</p>
+<div class="dashboard-wrapper">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h2><i class="fas fa-chart-line"></i> TravelBug</h2>
+      <small>ACME</small>
     </div>
-    
-    <div class="stats-grid">
-      <div class="stat-card">
-        <i class="fas fa-map-marker-alt fa-2x mb-3"></i>
-        <span class="stat-number">{{ summary.total_destinations }}</span>
-        <span class="stat-label">Destinations</span>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">My Focus</div>
+      <ul class="sidebar-menu">
+        <li><a href="{% url 'destination_list' %}"><i class="fas fa-bullseye"></i> My Focus</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Work</div>
+      <ul class="sidebar-menu">
+        <li><a href="{% url 'destination_list' %}"><i class="fas fa-map-marked-alt"></i> Destinations</a></li>
+        <li><a href="{% url 'reviews_list' %}"><i class="fas fa-star"></i> Reviews</a></li>
+        <li><a href="{% url 'activities_list' %}"><i class="fas fa-hiking"></i> Activities</a></li>
+        <li><a href="{% url 'travelers_list' %}"><i class="fas fa-users"></i> Travelers</a></li>
+        <li><a href="{% url 'analytics' %}" class="active"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Admin</div>
+      <ul class="sidebar-menu">
+        <li><a href="{% url 'destination_create' %}"><i class="fas fa-user-shield"></i> Add Destination</a></li>
+        <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <div class="top-header">
+      <h1>Workspace Insights</h1>
+      <div class="header-actions">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input type="text" placeholder="Search something...">
+        </div>
+        <button class="filter-btn">
+          <i class="fas fa-filter"></i>
+          Filter by: <strong>Plan</strong>
+        </button>
       </div>
-      
-      <div class="stat-card">
-        <i class="fas fa-star fa-2x mb-3"></i>
-        <span class="stat-number">{{ summary.total_reviews }}</span>
-        <span class="stat-label">Reviews</span>
+    </div>
+
+    <div class="content-container">
+      <div class="recent-activities">
+        <h2 class="section-title">Recent Activities</h2>
+        <div class="activities-grid">
+          <div class="activity-card">
+            <div class="activity-header">
+              <div class="metric-icon"><i class="fas fa-map-marker-alt"></i></div>
+              <span class="activity-title">Destinations</span>
+            </div>
+            <div class="activity-count">{{ summary.total_destinations }}</div>
+            <div class="metric-label"><span>/100</span></div>
+          </div>
+
+          <div class="activity-card">
+            <div class="activity-header">
+              <div class="metric-icon"><i class="fas fa-comments"></i></div>
+              <span class="activity-title">Reviews</span>
+            </div>
+            <div class="activity-count">{{ summary.total_reviews }}</div>
+            <div class="metric-label"><span>/100</span></div>
+          </div>
+
+          <div class="activity-card">
+            <div class="activity-header">
+              <div class="metric-icon"><i class="fas fa-running"></i></div>
+              <span class="activity-title">Activities</span>
+            </div>
+            <div class="activity-count">{{ summary.total_activities }}</div>
+            <div class="metric-label"><span>/100</span></div>
+          </div>
+
+          <div class="activity-card">
+            <div class="activity-header">
+              <div class="metric-icon"><i class="fas fa-user-friends"></i></div>
+              <span class="activity-title">Travelers</span>
+            </div>
+            <div class="activity-count">{{ summary.total_travelers }}</div>
+            <div class="metric-label"><span>/100</span></div>
+          </div>
+        </div>
       </div>
-      
-      <div class="stat-card">
-        <i class="fas fa-users fa-2x mb-3"></i>
-        <span class="stat-number">{{ summary.total_travelers }}</span>
-        <span class="stat-label">Travelers</span>
-      </div>
-      
-      <div class="stat-card">
-        <i class="fas fa-hiking fa-2x mb-3"></i>
-        <span class="stat-number">{{ summary.total_activities }}</span>
-        <span class="stat-label">Activities</span>
-      </div>
-      
-      <div class="stat-card">
-        <i class="fas fa-chart-bar fa-2x mb-3"></i>
-        <span class="stat-number">{{ summary.average_rating }}</span>
-        <span class="stat-label">Avg Rating</span>
-      </div>
-      
-      <div class="stat-card">
-        <i class="fas fa-trophy fa-2x mb-3"></i>
-        <span class="stat-number" style="font-size: 1.2rem;">{{ summary.top_destination }}</span>
-        <span class="stat-label">Top Destination</span>
+
+      <div class="chart-section">
+        <h2 class="section-title">Analytics & Insights</h2>
+
+        <div class="charts-grid">
+          <div class="chart-box">
+            <h3>Destination Popularity</h3>
+            {{ destination_popularity|safe }}
+          </div>
+
+          <div class="chart-box">
+            <h3>Destination Ratings</h3>
+            {{ destination_ratings|safe }}
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-box">
+            <h3>Activity Distribution</h3>
+            {{ activity_distribution|safe }}
+          </div>
+
+          <div class="chart-box">
+            <h3>Traveler Favorites</h3>
+            {{ traveler_preferences|safe }}
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <h3>Rating Trends</h3>
+          {{ rating_trends|safe }}
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-box">
+            <h3>Visitor Distribution by Month</h3>
+            {{ seasonal_heatmap|safe }}
+          </div>
+
+          <div class="chart-box">
+            <h3>Rating Distribution</h3>
+            {{ rating_distribution|safe }}
+          </div>
+        </div>
+
+        <div class="chart-box">
+          <h3>Top Destinations Comparison</h3>
+          {{ top_destinations_comparison|safe }}
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<div class="charts-section">
-  <div class="container">
-    
-    <!-- Destination Popularity -->
-    <div class="section-header">
-      <h2 class="section-title">Destination Performance</h2>
-      <p class="section-subtitle">Analyzing popularity and ratings across Uganda destinations</p>
-    </div>
-    
-    <div class="grid-2">
-      <div class="chart-container">
-        {% if destination_popularity %}
-          {{ destination_popularity|safe }}
-        {% else %}
-          <div class="no-data">
-            <i class="fas fa-chart-bar fa-3x mb-3"></i>
-            <p>No data available yet</p>
-          </div>
-        {% endif %}
-      </div>
-      
-      <div class="chart-container">
-        {% if destination_ratings %}
-          {{ destination_ratings|safe }}
-        {% else %}
-          <div class="no-data">
-            <i class="fas fa-chart-bar fa-3x mb-3"></i>
-            <p>No data available yet</p>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-    
-    <!-- Multi-metric Comparison -->
-    <div class="chart-container">
-      {% if top_destinations_comparison %}
-        {{ top_destinations_comparison|safe }}
-      {% else %}
-        <div class="no-data">
-          <i class="fas fa-chart-bar fa-3x mb-3"></i>
-          <p>No data available yet</p>
-        </div>
-      {% endif %}
-    </div>
-    
-    <!-- Activities and Preferences -->
-    <div class="section-header">
-      <h2 class="section-title">Activities & Traveler Preferences</h2>
-      <p class="section-subtitle">Understanding what travelers love most</p>
-    </div>
-    
-    <div class="grid-2">
-      <div class="chart-container">
-        {% if activity_distribution %}
-          {{ activity_distribution|safe }}
-        {% else %}
-          <div class="no-data">
-            <i class="fas fa-chart-pie fa-3x mb-3"></i>
-            <p>No data available yet</p>
-          </div>
-        {% endif %}
-      </div>
-      
-      <div class="chart-container">
-        {% if traveler_preferences %}
-          {{ traveler_preferences|safe }}
-        {% else %}
-          <div class="no-data">
-            <i class="fas fa-chart-pie fa-3x mb-3"></i>
-            <p>No data available yet</p>
-          </div>
-        {% endif %}
-      </div>
-    </div>
-    
-    <!-- Rating Trends -->
-    <div class="section-header">
-      <h2 class="section-title">Rating Analysis</h2>
-      <p class="section-subtitle">Tracking review patterns and trends</p>
-    </div>
-    
-    <div class="chart-container">
-      {% if rating_trends %}
-        {{ rating_trends|safe }}
-      {% else %}
-        <div class="no-data">
-          <i class="fas fa-chart-line fa-3x mb-3"></i>
-          <p>No data available yet</p>
-        </div>
-      {% endif %}
-    </div>
-    
-    <div class="chart-container">
-      {% if rating_distribution %}
-        {{ rating_distribution|safe }}
-      {% else %}
-        <div class="no-data">
-          <i class="fas fa-chart-bar fa-3x mb-3"></i>
-          <p>No data available yet</p>
-        </div>
-      {% endif %}
-    </div>
-    
-    <!-- Seasonal Tourism -->
-    <div class="section-header">
-      <h2 class="section-title">Seasonal Tourism Patterns</h2>
-      <p class="section-subtitle">Best times to visit Uganda destinations</p>
-    </div>
-    
-    <div class="chart-container">
-      {% if seasonal_heatmap %}
-        {{ seasonal_heatmap|safe }}
-      {% else %}
-        <div class="no-data">
-          <i class="fas fa-calendar-alt fa-3x mb-3"></i>
-          <p>No data available yet</p>
-        </div>
-      {% endif %}
-    </div>
-    
-  </div>
-</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const metricCards = document.querySelectorAll('.metric-card');
+    metricCards.forEach((card, index) => {
+      setTimeout(() => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s, transform 0.5s';
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 50);
+      }, index * 100);
+    });
+  });
+</script>
+
 {% endblock %}
