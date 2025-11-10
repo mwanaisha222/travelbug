@@ -584,12 +584,12 @@
         <li><a href="#overview" class="active"><i class="fas fa-th-large"></i> Overview</a></li>
         <li><a href="#popularity"><i class="fas fa-chart-bar"></i> Destination Popularity</a></li>
         <li><a href="#ratings"><i class="fas fa-star"></i> Destination Ratings</a></li>
+        <li><a href="#comparison"><i class="fas fa-columns"></i> Top Destinations</a></li>
         <li><a href="#activities"><i class="fas fa-chart-pie"></i> Activity Distribution</a></li>
         <li><a href="#preferences"><i class="fas fa-heart"></i> Traveler Favorites</a></li>
         <li><a href="#trends"><i class="fas fa-chart-line"></i> Rating Trends</a></li>
         <li><a href="#heatmap"><i class="fas fa-calendar-alt"></i> Visitor Heatmap</a></li>
         <li><a href="#distribution"><i class="fas fa-chart-area"></i> Rating Distribution</a></li>
-        <li><a href="#comparison"><i class="fas fa-columns"></i> Top Destinations</a></li>
       </ul>
     </div>
 
@@ -670,8 +670,8 @@
       <div class="chart-section">
         <h2 class="section-title">Analytics & Insights</h2>
 
-        <div id="popularity" class="charts-grid">
-          <div class="chart-box">
+        <div class="charts-grid">
+          <div id="popularity" class="chart-box">
             <h3>Destination Popularity</h3>
             {{ destination_popularity|safe }}
           </div>
