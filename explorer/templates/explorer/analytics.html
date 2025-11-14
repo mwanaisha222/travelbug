@@ -502,6 +502,7 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     margin-bottom: 1.5rem;
     transition: box-shadow 0.2s;
+    width: 100%;
   }
 
   .chart-box:hover {
@@ -517,7 +518,15 @@
 
   .charts-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* single-column layout so visualizations stack vertically */
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  /* vertical stacking utility for specific chart pairs */
+  .charts-vertical {
+    display: flex;
+    flex-direction: column;
     gap: 1.5rem;
   }
 
@@ -628,7 +637,7 @@
                 <span class="activity-title">Destinations</span>
               </div>
               <div class="activity-count">{{ summary.total_destinations }}</div>
-              <div class="metric-label"><span>/100</span></div>
+              {% comment %} <div class="metric-label"><span>/100</span></div> {% endcomment %}
             </div>
           </a>
 
@@ -639,7 +648,7 @@
                 <span class="activity-title">Reviews</span>
               </div>
               <div class="activity-count">{{ summary.total_reviews }}</div>
-              <div class="metric-label"><span>/100</span></div>
+              {% comment %} <div class="metric-label"><span>/100</span></div> {% endcomment %}
             </div>
           </a>
 
@@ -650,7 +659,7 @@
                 <span class="activity-title">Activities</span>
               </div>
               <div class="activity-count">{{ summary.total_activities }}</div>
-              <div class="metric-label"><span>/100</span></div>
+              {% comment %} <div class="metric-label"><span>/100</span></div> {% endcomment %}
             </div>
           </a>
 
@@ -661,7 +670,7 @@
                 <span class="activity-title">Travelers</span>
               </div>
               <div class="activity-count">{{ summary.total_travelers }}</div>
-              <div class="metric-label"><span>/100</span></div>
+              {% comment %} <div class="metric-label"><span>/100</span></div> {% endcomment %}
             </div>
           </a>
         </div>
@@ -670,7 +679,7 @@
       <div class="chart-section">
         <h2 class="section-title">Analytics & Insights</h2>
 
-        <div class="charts-grid">
+        <div class="charts-vertical">
           <div id="popularity" class="chart-box">
             <h3>Destination Popularity</h3>
             {{ destination_popularity|safe }}
@@ -705,10 +714,10 @@
         </div>
 
         <div id="heatmap" class="charts-grid">
-          <div class="chart-box">
+          {% comment %} <div class="chart-box">
             <h3>Visitor Distribution by Month</h3>
             {{ seasonal_heatmap|safe }}
-          </div>
+          </div> {% endcomment %}
 
           <div id="distribution" class="chart-box">
             <h3>Rating Distribution</h3>
